@@ -1,31 +1,22 @@
-
 #!/usr/bin/python3
-""" ToDo list """
-
+"""Module for gathering employee TODO list progress"""
 import requests
 import sys
 
-if __name__ == "__main__":
-    employee_id = int(sys.argv[1])
-    employee_url = "https://jsonplaceholder\
-.typicode.com/users/{}".format(employee_id)
-    todo_url = "https://jsonplaceholder\
-.typicode.com/users/{}/todos".format(employee_id)
 
-    employee_data = requests.get(employee_url).json()
-    employee_name = employee_data['name']
-
-    todo_data = requests.get(todo_url).json()
-
-    num_completed_tasks = 0
-    for task in todo_data:
-        if task['completed']:
-            num_completed_tasks += 1
-
-    total_num_tasks = len(todo_data)
-    print("Employee {} is done with tasks({}/{}):"
-          .format(employee_name, num_completed_tasks, total_num_tasks))
-
-    for task in todo_data:
-        if task['completed']:
-            print("\t {}".format(task['title']))
+if __name__ == '__main__':
+    user_id = sys.argv[1]
+    user_url = "https://jsonplaceholder.typicode.com/users/{}" \
+        .format(user_id)
+    todos_url = "https://jsonplaceholder.typicode.com/users/{}/todos/" \
+        .format(user_id)
+    user_info = requests.request('GET', user_url).json()
+    todos_info = requests.request('GET', todos_url).json()
+    employee_name = user_info["username"]
+    task_completed = list(filter(lambda obj:
+                                 (obj["completed"] is True), todos_info))
+    number_of_done_tasks = len(task_completed)
+    total_number_of_tasks = len(todos_info)
+    print("Employee {} is done with tasks({}/{}):".
+          format(employee_name, number_of_done_tasks, total_number_of_tasks))
+    [print("\t" + task["title"]) for task in task_completed]
